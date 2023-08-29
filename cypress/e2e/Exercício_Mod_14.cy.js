@@ -2,7 +2,7 @@
 
 describe('login - Testes da API Serverest', ()=> {
 
-  it('Deve fazer login com sucesso', () => {
+  it.only('Deve fazer login com sucesso', () => {
   cy.request({
     Method:'POST',
     url:'login',
@@ -14,7 +14,6 @@ describe('login - Testes da API Serverest', ()=> {
   }).then((Response) => {
 expect(Response.status).to.equal(200)
 cy.log('Não gerou o token')
-
   })
 
   });
