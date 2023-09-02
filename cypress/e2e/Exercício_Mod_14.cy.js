@@ -1,21 +1,23 @@
 /// <reference types="cypress" />
 
 describe('login - Testes da API Serverest', ()=> {
-
   it.only('Deve fazer login com sucesso', () => {
-  cy.request({
-    Method:'POST',
-    url:'login',
-    Body: {
-      "email": "fulano@qa.com",
-      "password": "teste"
-    }
+    cy.request({
+    method: 'POST',
+    url: 'http://localhost:3000/login',
+    body: {
+          "email": "luiz_fernando@ebac.com.br",
+          "password": "t1234"
+          }
 
-  }).then((Response) => {
-expect(Response.status).to.equal(200)
-cy.log('Não gerou o token')
-  })
+    }).then((response) => {
+      expect(response.status).to.equal(200)
+      expect(response.body.message).to.equal('Login realizado com sucesso')
+      cy.log(response.body.authorization)
 
-  });
+      })
 
-  });
+    
+    });
+    
+    });
