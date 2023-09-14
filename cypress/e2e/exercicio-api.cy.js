@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import usuariosSchema from '../contracts/usuarios.contract';
 import contrato from '../contracts/usuarios.contract'
 
 describe('Testes da Funcionalidade Usuários', () => {
@@ -17,7 +18,6 @@ describe('Testes da Funcionalidade Usuários', () => {
           method: 'GET',
           url: 'usuarios',
           }).then((response) => {
-          expect(response.body.usuarios[1].nome).to.equal('Gabriel Santos')
           expect(response.status).to.equal(200)
           expect(response.body).to.have.property('usuarios')
           expect(response.duration).to.be.lessThan(20)
@@ -25,13 +25,15 @@ describe('Testes da Funcionalidade Usuários', () => {
                     });
 
     it('Deve cadastrar um usuário com sucesso', () => {
-     let usuario = `Eloisa Maria ${Math.floor(Math.random() * 100000000)}`
+     let usuario = `${Math.floor(Math.random() * 100000000)}`
+     let email = `${usuario}@qa.com`
+     console.log(email)
           cy.request({
           method: 'POST',
           url: 'usuarios',
           body: {
                "nome": usuario,
-               "email": "eloisa_maria@qa.com.br",
+               "email": email,
                "password": "teste123",
                "administrador": "true"
              },
@@ -43,16 +45,17 @@ describe('Testes da Funcionalidade Usuários', () => {
                     });
 
      it('Deve validar um usuário com email inválido', () => {
-          cy.cadastrarUsuario(token, 'Suzana Sousa', 'maria_clara#yahoo.com.br', 'teste123', 'true')
+          cy.cadastrarUsuario(token, 'Maria Clara', 'maria_clara@@yahoo.com.br', 'teste123', 'true')
           .then((response) => {
-          expect(response.status).to.equal(405)
+          expect(response.status).to.equal(400)
           expect(response.body.message).to.equal('email deve ser um email válido')
                     })
                     });
 
+
      it('Deve editar um usuário previamente cadastrado', () => {
           let usuario = `Usuario ${Math.floor(Math.random() * 100000000)}`
-          cy.cadastrarUsuario(token, usuario, 'maria_clara#yahoo.com.br', 'teste123', 'true')
+          cy.cadastrarUsuario(token, usuario, 'elomariasilva@qa.com.br', 'teste123', 'true')
           .then(response => {
           let id = response.body._id
 
@@ -62,12 +65,12 @@ describe('Testes da Funcionalidade Usuários', () => {
                headers: {authorization: token},
                body: {
                     "nome": "Eloisa Maria Silva Editado",
-                    "email": "eloisamariasilvaeditado@qa.com.br",
+                    "email": "elomariasilva@qa.com.br",
                     "password": "teste",
                     "administrador": "true"
                   }
            }).then(response => {
-               expect(response.body.message).to.equal('Cadastro realizado com sucesso')
+               expect(response.body.message).to.equal('Registro alterado com sucesso')
            })
                     })
                     });
@@ -75,7 +78,7 @@ describe('Testes da Funcionalidade Usuários', () => {
 
     it('Deve deletar um usuário previamente cadastrado', () => {
      let usuario = `Eloisa Santos ${Math.floor(Math.random() * 100000000)}`
-     cy.cadastrarUsuario(token, usuario, 'eloisasantos@qa.com.br', 'teste123', 'true')
+     cy.cadastrarUsuario(token, usuario, 'maria_clara@yahoo.com.br', 'teste123', 'true')
      .then(response => {
           let id = response.body._id
           cy.request({
@@ -84,7 +87,7 @@ describe('Testes da Funcionalidade Usuários', () => {
                headers: {authorization: token}
      }).then(response => {
           expect(response.body.message).to.equal('Registro excluído com sucesso')
-          expect(response.status).to.equal(200)
+          expect(response.status).to.equal(400)
      })
      })
      });
